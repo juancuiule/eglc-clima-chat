@@ -84,12 +84,18 @@ export function parseResponse(response: string): {
   }
 
   if (questionMatches) {
-    parsedResponse.questions = questionMatches.map((match) =>
-      match.match(/{{question}}\n?(.*?)\n?{{\/question}}/)[1].trim()
-    );
-  }
+    parsedResponse.questions = questionMatches.map((match) => {
+      const questionMatch = match.match(
+        /{{question}}\n?(.*?)\n?{{\/question}}/
+      );
 
-  // console.log(parsedResponse);
+      if (questionMatch) {
+        return questionMatch[1].trim();
+      }
+
+      return "";
+    });
+  }
 
   return parsedResponse;
 }
