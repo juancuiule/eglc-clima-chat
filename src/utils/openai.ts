@@ -154,56 +154,49 @@ export const OpenAIService = {
   apiKey: "",
   async getGPTResponse(prompt: string, context: string): Promise<GPTResponse> {
     const apiKey = this.apiKey;
-    try {
-      const sources = await fetch("/api/similarity", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      })
-        .then((res) => res.json())
-        .then(({ sources }: SimilarityResponse) => {
-          return sources.map((_) => _.pageContent).join("\n");
-        });
 
-      // console.log(sources);
+    const sources = await fetch("/api/similarity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt }),
+    })
+      .then((res) => res.json())
+      .then(({ sources }: SimilarityResponse) => {
+        return sources.map((_) => _.pageContent).join("\n");
+      });
 
-      const content = userTemplate(context, prompt, sources);
+    // console.log(sources);
 
-      // console.log(content);
+    const content = userTemplate(context, prompt, sources);
 
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
+    // console.log(content);
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: systemRole },
+          { role: "user", content: userExampleQuestion },
+          { role: "assistant", content: assistantExampleResponse },
+          {
+            role: "user",
+            content: content,
           },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-              { role: "system", content: systemRole },
-              { role: "user", content: userExampleQuestion },
-              { role: "assistant", content: assistantExampleResponse },
-              {
-                role: "user",
-                content: content,
-              },
-            ],
-          }),
-        }
-      );
+        ],
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      // console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
-      return data as GPTResponse;
-    } catch (error) {
-      console.error("Error:", error.message);
-      throw error;
-    }
+    return data as GPTResponse;
   },
 };
