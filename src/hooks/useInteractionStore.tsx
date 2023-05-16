@@ -1,4 +1,6 @@
-import { findById, reconstructHistory } from "@/utils";
+import { findById, parseResponse, reconstructHistory } from "@/utils";
+import { OpenAIService } from "@/utils/openai-client";
+import { userTemplate } from "@/utils/prompt-engineering";
 import { CompletionResponse, InteractionData, Source } from "@/utils/types";
 import { produce } from "immer";
 import { create } from "zustand";
@@ -95,7 +97,7 @@ export const useInteractionStore = create<State>((set, get) => ({
   ask: async (interaction: InteractionData) => {
     if (interaction.answer) return;
 
-    const context = reconstructHistory(get().data, interaction.id);
+    const history = reconstructHistory(get().data, interaction.id);
     get().updateInteraction(interaction.id, { loading: true });
 
     try {
@@ -109,18 +111,32 @@ export const useInteractionStore = create<State>((set, get) => ({
         .then((res) => res.json())
         .then(({ sources }: { sources: Source[] }) => sources);
 
-      const { answer, questions }: CompletionResponse = await fetch(
-        "/api/openai",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: interaction.question,
-            context,
-            sources,
-          }),
-        }
-      ).then((res) => res.json());
+      const userMessageContent = userTemplate(
+        history,
+        interaction.question,
+        sources.map((_) => _.source.pageContent).join("\n")
+      );
+
+      const response = await OpenAIService.gptChatCompletion(
+        userMessageContent
+      );
+
+      const { answer, questions } = response.choices.map(({ message }) => {
+        return parseResponse(message.content);
+      })[0];
+
+      // const { answer, questions }: CompletionResponse = await fetch(
+      //   "/api/openai",
+      //   {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       prompt: interaction.question,
+      //       context,
+      //       sources,
+      //     }),
+      //   }
+      // ).then((res) => res.json());
 
       get().updateInteraction(interaction.id, {
         answer: answer,
