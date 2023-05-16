@@ -2,14 +2,13 @@ import { parseResponse } from "@/utils";
 import { OpenAIService } from "@/utils/openai-client";
 import { querySimilarity } from "@/utils/pinecone-client";
 import { userTemplate } from "@/utils/prompt-engineering";
-import { CompletionResponse } from "@/utils/types";
+import { CompletionResponse, Source } from "@/utils/types";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  const { prompt, history }: { prompt: string; history: string } =
-    await request.json();
+type Body = { prompt: string; history: string; sources: Source[] };
 
-  const sources = await querySimilarity(prompt);
+export async function POST(request: Request) {
+  const { prompt, history, sources }: Body = await request.json();
 
   const userMessageContent = userTemplate(
     history,

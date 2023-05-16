@@ -1,5 +1,5 @@
 import { findById, reconstructHistory } from "@/utils";
-import { CompletionResponse, InteractionData } from "@/utils/types";
+import { CompletionResponse, InteractionData, Source } from "@/utils/types";
 import { produce } from "immer";
 import { create } from "zustand";
 
@@ -98,35 +98,48 @@ export const useInteractionStore = create<State>((set, get) => ({
     const context = reconstructHistory(get().data, interaction.id);
     get().updateInteraction(interaction.id, { loading: true });
 
-    await fetch("/api/openai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: interaction.question,
-        context,
-      }),
-    })
-      .then((res) => res.json())
-      .then(({ answer, questions, sources }: CompletionResponse) => {
-        get().updateInteraction(interaction.id, {
-          answer: answer,
-          following: questions.map((question: string, i) => ({
-            id: `${interaction.id}.${i + 1}`,
-            question,
-            loading: false,
-            error: false,
-          })),
-          sources,
+    try {
+      const sources = await fetch("/api/pinecone/similarity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: interaction.question,
+        }),
+      })
+        .then((res) => res.json())
+        .then(({ sources }: { sources: Source[] }) => sources);
+
+      const { answer, questions }: CompletionResponse = await fetch(
+        "/api/openai",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: interaction.question,
+            context,
+            sources,
+          }),
+        }
+      ).then((res) => res.json());
+
+      get().updateInteraction(interaction.id, {
+        answer: answer,
+        following: questions.map((question: string, i) => ({
+          id: `${interaction.id}.${i + 1}`,
+          question,
           loading: false,
           error: false,
-        });
-      })
-      .catch((e) => {
-        get().updateInteraction(interaction.id, {
-          loading: false,
-          error: true,
-        });
+        })),
+        sources,
+        loading: false,
+        error: false,
       });
+    } catch (error) {
+      get().updateInteraction(interaction.id, {
+        loading: false,
+        error: true,
+      });
+    }
   },
   updateInteraction: (id, updatedData) =>
     set((state) =>
