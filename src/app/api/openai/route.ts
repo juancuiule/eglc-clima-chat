@@ -1,6 +1,5 @@
 import { parseResponse } from "@/utils";
 import { OpenAIService } from "@/utils/openai-client";
-import { querySimilarity } from "@/utils/pinecone-client";
 import { userTemplate } from "@/utils/prompt-engineering";
 import { CompletionResponse, Source } from "@/utils/types";
 import { NextResponse } from "next/server";
