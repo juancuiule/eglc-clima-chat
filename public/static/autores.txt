@@ -1,0 +1,53 @@
+[autor] - Timoteo Marchini
+[descripción] - Profesor Adjunto de Química General (Facultad de Farmacia y Bioquímica, UBA). Investigador Asistente del CONICET (IBIMOL) y en el Hospital Universitario de Friburgo (Alemania). Especialista en el estudio de los efectos de la contaminación del aire urbano sobre la salud.
+
+[autor] - Carolina Vera
+[descripción] - Profesora Titular (Facultad de Ciencias Exactas y Naturales, UBA). Investigadora Principal del CONICET (CIMA). Vicepresidenta WGI (IPCC). Coordinadora de Pampa Azul (MINCyT).
+
+[autor] - Tamara Ulla
+[descripción] - Politóloga (UCA). Magíster en Desarrollo Internacional (Sciences Po). Especialista en evaluación de políticas de cooperación internacional y movilidad humana asociada al cambio climático.
+
+[autor] - Juan Ignacio Arroyo
+[descripción] - Licenciado en Economía. Consultor en Energía, docente y divulgador. Cofundador de Ahora Qué?
+
+[autor] - Felipe Diego Gonzalez
+[descripción] - Magíster en Ciencias Urbanas Aplicadas e Informática (NYU Center for Urban Science + Progress). Especialista en ciencia de datos y movilidad.
+
+[autor] - Ezequiel Arrieta
+[descripción] - Doctor en Ciencias Biológicas (UNC). Investigador posdoctoral del CONICET (IMBIV).
+
+[autor] - Ana Julia Aneise
+[descripción] - Área de Recursos Naturales (Fundar). Licenciada en Economía (UBA). Maestranda en Economía y Derecho del Cambio Climático (FLACSO). Activista de Jóvenes por el Clima.
+
+[autor] - Ángeles Sancisi
+[descripción] - Licenciada en Ciencia Política y Gobierno (Universidad Torcuato Di Tella). Área de Desarrollo Productivo (Fundar).
+
+[autor] - Marcos Feole
+[descripción] - Magíster en Estadística y Analítica (University of Illinois at Urbana-Champaign). Magíster en Física (Instituto Balseiro). Área de Datos (Fundar).
+
+[autor] - Matías Gutman
+[descripción] - Licenciado en Economía (UBA). Magíster en Economía (UdeSA). Área de Desarrollo Productivo (Fundar).
+
+[autor] - Federico Marque
+[descripción] - Ingeniero Industrial (ITBA). Socio de GRIDX.
+
+[autor] - María Renner
+[descripción] - Doctora en Neurociencias (Universidad de Ámsterdam). Socia de GRIDX.
+
+[autor] - Matías Peire
+[descripción] - Licenciado en Administración (UBA). Magíster en Finanzas corporativas (UdeSA). Fundador de GRIDX.
+
+[autor] - Bruno Rodríguez
+[descripción] - Estudiante de Ciencias Políticas (UBA). Autor de La Generación Despierta. Miembro del Consejo Estratégico Democracia 40 (CIPPEC) y de Generation Climate Initiative. Activista en Jóvenes por el Clima (CABA).
+
+[autor] - Dante Borzone
+[descripción] - Estudiante de Licenciatura en Ciencias Biológicas (Universidad Favaloro). Coordinador del proyecto Favaloro Ambiental. Activista en Jóvenes por el Clima (Chubut).
+
+[autor] - Gastón Tenembaum
+[descripción] - Estudiante de la Carrera “Licenciatura en Ciencias Ambientales” de la facultad de agronomía de la Universidad de Buenos Aires. Desde 2019 forma parte de Jóvenes por el Clima Argentina.
+
+[autor] - María Luz Eggel
+[descripción] - Licenciada en Biología Molecular (UNSL). Becaria doctoral del CONICET (IQUIFIB). Diplomatura en Ambiente y Sociedad (CLACSO). Activista en Jóvenes por el Clima (San Luis).
+
+[autor] - Priscila Bulnes
+[descripción] - Licenciada en Biología (UNLP). Diplomatura en Bioestadística aplicada. Técnica en la Dirección de Cambio Climático (Ministerio de Ambiente). Activista en Jóvenes por el Clima (La Plata).

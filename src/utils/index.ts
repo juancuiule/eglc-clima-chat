@@ -1,4 +1,3 @@
-import { OpenAIService } from "./openai";
 import { InteractionData } from "./types";
 
 export const findInteractionListById =
@@ -99,17 +98,3 @@ export function parseResponse(response: string): {
 
   return parsedResponse;
 }
-
-export const sendPrompt = async (prompt: string, context: string) => {
-  try {
-    const response = await OpenAIService.getGPTResponse(prompt, context);
-
-    const res = response.choices.map(({ message }) => {
-      return parseResponse(message.content);
-    });
-
-    return res;
-  } catch (error) {
-    throw error;
-  }
-};

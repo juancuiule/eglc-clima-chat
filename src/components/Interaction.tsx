@@ -4,8 +4,20 @@ import { useState } from "react";
 
 import { PlusCircle, RefreshCw } from "react-feather";
 
-export const Interaction = (props: { interaction: InteractionData }) => {
-  const { interaction } = props;
+export const Interaction = ({
+  interaction,
+}: {
+  interaction: InteractionData;
+}) => {
+  const {
+    id,
+    answer,
+    question,
+    sources = [],
+    following = [],
+    error,
+    loading,
+  } = interaction;
 
   const { updateInteraction, ask } = useInteractionStore();
 
@@ -14,41 +26,39 @@ export const Interaction = (props: { interaction: InteractionData }) => {
 
   return (
     <div
-      className={`flex flex-col gap-2 ${interaction.id !== "1" ? "ml-8" : ""} ${
-        interaction.answer
-          ? "border-b-4 border-gray-100 border-dashed pb-2"
-          : ""
+      className={`flex flex-col gap-2 ${id !== "1" ? "ml-8" : ""} ${
+        answer ? "border-b-4 border-gray-100 border-dashed pb-2" : ""
       }
       `}
     >
       <div
         className={`inline-flex align-center gap-1  ${
-          interaction.answer ? "" : "text-blue-500 underline cursor-pointer"
+          answer ? "" : "text-blue-500 underline cursor-pointer"
         } `}
-        tabIndex={interaction.answer ? -1 : 1}
+        tabIndex={answer ? -1 : 1}
         style={{ width: "fit-content" }}
         onClick={() => {
           ask(interaction);
         }}
       >
-        {interaction.loading ? (
+        {loading ? (
           <RefreshCw className="animate-spin shrink-0 w-3 h-3 mt-1.5 mr-1" />
         ) : (
           <></>
         )}
         <span>
-          {interaction.id} - {interaction.question}{" "}
-          {interaction.error ? <span className="text-red-500">error</span> : ""}
+          {id} - {question}{" "}
+          {error ? <span className="text-red-500">error</span> : ""}
         </span>
       </div>
-      {interaction.answer ? (
+      {answer ? (
         <details>
           <summary className="border-l-4 border-gray-300 px-3 py-1 text-black">
-            {interaction.answer}
+            {answer}
           </summary>
-          {interaction.following && interaction.following.length >= 0 ? (
+          {following && following.length >= 0 ? (
             <div className="flex flex-col gap-2 mt-2">
-              {interaction.following?.map((subInteraction) => {
+              {following?.map((subInteraction) => {
                 return (
                   <Interaction
                     key={subInteraction.id}
@@ -60,8 +70,7 @@ export const Interaction = (props: { interaction: InteractionData }) => {
                 {showNew ? (
                   <>
                     <label htmlFor="question-input">
-                      {interaction.id}.{interaction.following.length + 1}{" "}
-                      Agregar pregunta propia:
+                      {id}.{following.length + 1} Agregar pregunta propia:
                     </label>
                     <textarea
                       id="question-input"
@@ -77,7 +86,6 @@ export const Interaction = (props: { interaction: InteractionData }) => {
                       className="group border rounded px-3 w-fit flex items-center gap-1"
                       style={{ transition: "width 0.2s" }}
                       onClick={() => {
-                        const { id, following = [] } = interaction;
                         const newInteraction = {
                           id: `${id}.${following.length + 1}`,
                           question: newQuestion,
@@ -112,6 +120,34 @@ export const Interaction = (props: { interaction: InteractionData }) => {
               </div>
             </div>
           ) : null}
+        </details>
+      ) : null}
+      {sources.length > 0 ? (
+        <details className="flex flex-col gap-2 ml-4">
+          <summary className="text-black">Fuentes:</summary>
+          {sources.map(({ source: { pageContent, metadata }, score }, n) => {
+            return (
+              <details key={`${id}.source-${n + 1}`}>
+                <summary className="py-1 text-black">
+                  <span className="ml-1">Fuente {n + 1}</span>
+                </summary>
+                <div className="flex flex-col gap-2 mt-2">
+                  {pageContent}{" "}
+                  <a
+                    href={`/static/${metadata.source.replace(
+                      "/content/drive/MyDrive/Textos Clima/",
+                      ""
+                    )}`}
+                    target="_blank"
+                    rel="noreferer"
+                    className="text-xs text-gray-300 underline"
+                  >
+                    {metadata.source}
+                  </a>
+                </div>
+              </details>
+            );
+          })}
         </details>
       ) : null}
     </div>

@@ -3,7 +3,6 @@ import { Graph } from "@/components/Graph";
 import { Interaction } from "@/components/Interaction";
 import { useInteractionStore } from "@/hooks/useInteractionStore";
 import { useToggle } from "@/hooks/useToggle";
-import { OpenAIService } from "@/utils/openai";
 import { useState } from "react";
 import { ArrowRight, Maximize, X } from "react-feather";
 
@@ -16,10 +15,9 @@ const FirstQuestionView = () => {
   const { updateInteraction, ask } = useInteractionStore();
 
   const [question, setQuestion] = useState("");
-  const [apiKey, setApiKey] = useState("");
 
   return (
-    <div className="flex flex-col gap-10 border rounded px-4 py-4">
+    <div className="flex flex-col gap-4 border rounded px-4 py-4">
       <div className="flex flex-col gap-1">
         <label htmlFor="question-input">Tu pregunta:</label>
         <textarea
@@ -33,35 +31,10 @@ const FirstQuestionView = () => {
           }}
         />
       </div>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="api-key-input">Tu api key:</label>
-        <input
-          id="api-key-input"
-          value={apiKey}
-          placeholder="Copiá acá tu api key de OpenAI. Es algo como: sk-...8BWb"
-          className="border rounded text-sm px-2 inline-block w-full"
-          onChange={(e) => {
-            const value = e.target.value;
-            setApiKey(value);
-          }}
-        />
-        <span className="text-xs mt-1 text-gray-600 ml-1">
-          Para conseguir tu api key andá a:{" "}
-          <a
-            className="text-blue-500 underline pointer hover:text-blue-800"
-            href="https://platform.openai.com/account/api-keys"
-            target="_blank"
-            rel="noreferrer"
-          >
-            https://platform.openai.com/account/api-keys
-          </a>
-        </span>
-      </div>
       <button
         className="group border rounded px-3 w-fit flex items-center gap-1 hover:border-blue-500 hover:bg-blue-100"
         style={{ transition: "width 0.2s" }}
         onClick={() => {
-          OpenAIService.apiKey = apiKey;
           updateInteraction("1", {
             question,
           });

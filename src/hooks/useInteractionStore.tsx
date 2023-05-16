@@ -1,8 +1,7 @@
+import { findById, reconstructHistory } from "@/utils";
+import { CompletionResponse, InteractionData } from "@/utils/types";
 import { produce } from "immer";
-import { useCallback } from "react";
 import { create } from "zustand";
-import { findById, reconstructHistory, sendPrompt } from "@/utils";
-import { InteractionData } from "@/utils/types";
 
 export type State = {
   data: InteractionData;
@@ -99,27 +98,28 @@ export const useInteractionStore = create<State>((set, get) => ({
     const context = reconstructHistory(get().data, interaction.id);
     get().updateInteraction(interaction.id, { loading: true });
 
-    await sendPrompt(interaction.question, context)
-      .then((data) => {
-        if (data.length > 0) {
-          if (
-            data[0].answer &&
-            data[0].questions &&
-            data[0].questions.length > 0
-          ) {
-            get().updateInteraction(interaction.id, {
-              answer: data[0].answer,
-              following: data[0].questions.map((question: string, i) => ({
-                id: `${interaction.id}.${i + 1}`,
-                question,
-                loading: false,
-                error: false,
-              })),
-              loading: false,
-              error: false,
-            });
-          }
-        }
+    await fetch("/api/openai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: interaction.question,
+        context,
+      }),
+    })
+      .then((res) => res.json())
+      .then(({ answer, questions, sources }: CompletionResponse) => {
+        get().updateInteraction(interaction.id, {
+          answer: answer,
+          following: questions.map((question: string, i) => ({
+            id: `${interaction.id}.${i + 1}`,
+            question,
+            loading: false,
+            error: false,
+          })),
+          sources,
+          loading: false,
+          error: false,
+        });
       })
       .catch((e) => {
         get().updateInteraction(interaction.id, {
