@@ -277,8 +277,7 @@ export const Text2Image = memo(
               <h2 className="text-sm">Prompt:</h2>
               <p className="text-gray-700 text-xs">{prompt}</p>
               <a href={img} target="_blank">
-                <NextImage
-                  width={240}
+                <img
                   className="rounded-sm cursor-pointer"
                   src={img}
                   alt="ai generated text 2 image"
