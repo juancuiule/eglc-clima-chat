@@ -1,5 +1,6 @@
 "use client";
 import { memo } from "react";
+import NextImage from "next/image";
 import {
   BookOpen,
   Headphones,
@@ -276,7 +277,12 @@ export const Text2Image = memo(
               <h2 className="text-sm">Prompt:</h2>
               <p className="text-gray-700 text-xs">{prompt}</p>
               <a href={img} target="_blank">
-                <img className="rounded-sm cursor-pointer" src={img} alt="" />
+                <NextImage
+                  width={240}
+                  className="rounded-sm cursor-pointer"
+                  src={img}
+                  alt="ai generated text 2 image"
+                />
               </a>
             </div>
           </div>
@@ -394,3 +400,8 @@ export const Audio = memo(
     );
   }
 );
+
+Question.displayName = "Question";
+Text2Image.displayName = "Text2Image";
+Source.displayName = "Source";
+Audio.displayName = "Audio";

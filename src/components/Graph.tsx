@@ -56,13 +56,6 @@ const flattenInteraction = (
 const nodeTypes = {
   custom: CustomNode,
   contentSource: ContentSourceNode,
-  imageNode: memo((props: NodeProps) => {
-    return (
-      <div className="w-60">
-        <img src="https://cdn.discordapp.com/attachments/1103361741745827962/1104164209891213404/juan.cuiule_birdeye_angle_high_quality_photograph_buenos_aires__ee9c0242-6dab-40ef-bb45-2741635245a6.png" />
-      </div>
-    );
-  }),
 };
 
 const newNodesFromData = (prevNodes: Node[], data: InteractionData) => {
