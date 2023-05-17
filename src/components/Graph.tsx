@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import ReactFlow, {
   Background,
   Edge,
   Node,
+  NodeProps,
+  Position,
   XYPosition,
   useEdgesState,
   useNodesState,
@@ -12,7 +14,8 @@ import "reactflow/dist/style.css";
 
 import { useInteractionStore } from "@/hooks/useInteractionStore";
 import { InteractionData } from "@/utils/types";
-import CustomNode from "./CustomNode";
+import CustomNode from "./CustomNodes/CustomNode";
+import ContentSourceNode from "./CustomNodes/ContentSourceNode";
 
 const prevPosition = (id: string, nodes: Node[]) => {
   return nodes.find((node) => node.id === id)?.position;
@@ -21,14 +24,26 @@ const prevPosition = (id: string, nodes: Node[]) => {
 const interactionToNode = (
   interaction: InteractionData,
   position: XYPosition = { x: 0, y: 0 }
-): Node => {
-  const { id, question, answer } = interaction;
-  return {
-    id,
-    data: interaction,
-    position,
-    type: "custom",
-  };
+): Node[] => {
+  const { id, sources = [] } = interaction;
+
+  return [
+    ...sources.map((source, i) => ({
+      id: `${id}-source-${i + 1}`,
+      type: "contentSource",
+      data: source,
+      position: {
+        x: position.x + 420 + 40,
+        y: position.y + 50 * i,
+      },
+    })),
+    {
+      id,
+      data: interaction,
+      position,
+      type: "custom",
+    },
+  ];
 };
 
 const flattenInteraction = (
@@ -40,6 +55,14 @@ const flattenInteraction = (
 
 const nodeTypes = {
   custom: CustomNode,
+  contentSource: ContentSourceNode,
+  imageNode: memo((props: NodeProps) => {
+    return (
+      <div className="w-60">
+        <img src="https://cdn.discordapp.com/attachments/1103361741745827962/1104164209891213404/juan.cuiule_birdeye_angle_high_quality_photograph_buenos_aires__ee9c0242-6dab-40ef-bb45-2741635245a6.png" />
+      </div>
+    );
+  }),
 };
 
 const newNodesFromData = (prevNodes: Node[], data: InteractionData) => {
@@ -60,18 +83,33 @@ const newNodesFromData = (prevNodes: Node[], data: InteractionData) => {
 
 const newEdgesFromData = (prevEdges: Edge[], data: InteractionData) => {
   const everyInteraction = flattenInteraction(data);
-  return everyInteraction
+
+  const newEdges = everyInteraction
     .filter((i) => i.following !== undefined)
-    .flatMap(({ id, following = [] }) =>
-      following.map(({ id: subId, following: subFollowing = [] }) => {
-        return {
-          id: `e-${id}-${subId}`,
-          source: id,
-          target: subId,
-          animated: subFollowing.length !== 0,
-        };
-      })
-    );
+    .flatMap(({ id, following = [], sources = [] }) => {
+      const followEdges = following.map(
+        ({ id: subId, following: subFollowing = [] }) => {
+          return {
+            id: `e-${id}-${subId}`,
+            source: id,
+            target: subId,
+            animated: subFollowing.length !== 0,
+          };
+        }
+      );
+      const sourceEdges = sources.map((source, i) => ({
+        id: `e-${id}-source-${i + 1}`,
+        source: id,
+        target: `${id}-source-${i + 1}`,
+        sourceHandle: "source-handle",
+      }));
+      return [...followEdges, ...sourceEdges];
+    });
+
+  return [
+    ...prevEdges,
+    ...newEdges.filter((e) => !prevEdges.map((_) => _.id).includes(e.id)),
+  ];
 };
 
 export function Graph() {
@@ -81,7 +119,7 @@ export function Graph() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    setNodes((prevNodes) => newNodesFromData(prevNodes, data));
+    setNodes((prevNodes) => newNodesFromData(prevNodes, data).flat(2));
   }, [data, setNodes, setEdges]);
 
   useEffect(() => {
@@ -101,7 +139,7 @@ export function Graph() {
       edges={edges}
       nodeTypes={nodeTypes}
     >
-      <Background />
+      <Background style={{ backgroundColor: "#fafafa" }} />
     </ReactFlow>
   );
 }
