@@ -12,7 +12,7 @@ import {
 
 import "reactflow/dist/style.css";
 
-export const CustomNode = memo((props: NodeProps<{ selected: boolean }>) => {
+const CustomNode = memo((props: NodeProps<{ selected: boolean }>) => {
   const { selected } = props.data;
 
   return (
