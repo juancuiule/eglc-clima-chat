@@ -7,6 +7,7 @@ import {
   HelpCircle,
   Image,
   RefreshCcw,
+  X,
 } from "react-feather";
 import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 
@@ -120,7 +121,46 @@ export const Question = memo((props: NodeProps<QuestionData>) => {
                   Nación. Las vacas son la principal fuente de emisiones de
                   metano (<span className={`tag`}>CH4</span>
                   ), seguido de las emisiones de este mismo gas provenientes de
-                  los cultivos de arroz.
+                  los cultivos de arroz. iones de este mismo gas provenientes de{" "}
+                  <span
+                    className="tag items-center gap-1 mx-1"
+                    onClick={() => {
+                      const node = getNode(id)!;
+
+                      addNodes([
+                        {
+                          id: `${id}.images.2`,
+                          type: "text2image",
+                          position: {
+                            x: node.position.x + 400,
+                            y: node.position.y,
+                          },
+                          data: {
+                            img: "https://cdn.elgatoylacaja.com/2022/09/Figura-1.1.12.png",
+                            prompt: "",
+                          },
+                        },
+                      ]);
+
+                      addEdges([
+                        {
+                          id: `${id}.images.2--${id}`,
+                          source: id,
+                          sourceHandle: "handle-right",
+                          target: `${id}.images.2`,
+                        },
+                      ]);
+                    }}
+                  >
+                    <span
+                      className="w-3 h-3 rounded-sm bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url('https://cdn.elgatoylacaja.com/2022/09/Figura-1.1.12.png')`,
+                      }}
+                    ></span>
+                    <span className="">Imagen</span>
+                  </span>
+                  En esta imagen se puede ver ...
                 </p>
               </>
             ) : (
@@ -259,7 +299,7 @@ export const Text2Image = memo(
       data: { prompt, img },
     } = props;
 
-    const { addNodes, addEdges, getNode } = useReactFlow();
+    const { addNodes, addEdges, getNode, deleteElements } = useReactFlow();
 
     return (
       <div
@@ -271,8 +311,17 @@ export const Text2Image = memo(
         <div className="flex gap-2 h-full justify-center">
           <div className="w-10 flex flex-col items-center justify-center"></div>
           <div
-            className={`z-20 border border-gray-300 bg-gray-50 rounded w-60 p-2`}
+            className={`z-20 border border-gray-300 bg-gray-50 rounded w-60 p-2 relative`}
           >
+            <button
+              className="opacity-0 group-hover:opacity-100 absolute right-2 top-2 rounded-full hover:bg-gray-200 p-1 cursor-pointer transition-colors"
+              onClick={() => {
+                const node = getNode(id)!;
+                deleteElements({ nodes: [node] });
+              }}
+            >
+              <X size={12} />
+            </button>
             <div className="flex flex-col gap-2">
               <h2 className="text-sm">Prompt:</h2>
               <p className="text-gray-700 text-xs">{prompt}</p>

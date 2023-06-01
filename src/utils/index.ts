@@ -54,9 +54,9 @@ export const reconstructHistory = (
   if (history !== undefined) {
     return history
       .map((interaction) => {
-        return `Q: ${interaction.question}${
-          interaction.answer ? `\nA: ${interaction.answer}` : ""
-        }`;
+        return `
+        User question: ${interaction.question}
+        ${interaction.answer ? `Your answer: ${interaction.answer}` : ""}`;
       })
       .join("\n");
   }

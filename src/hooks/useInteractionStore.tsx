@@ -1,7 +1,6 @@
 import { findById, parseResponse, reconstructHistory } from "@/utils";
 import { OpenAIService } from "@/utils/openai-client";
-import { userTemplate } from "@/utils/prompt-engineering";
-import { CompletionResponse, InteractionData, Source } from "@/utils/types";
+import { InteractionData, Source } from "@/utils/types";
 import { produce } from "immer";
 import { create } from "zustand";
 
@@ -131,14 +130,10 @@ export const useInteractionStore = create<State>((set, get) => ({
         .then((res) => res.json())
         .then(({ sources }: { sources: Source[] }) => sources);
 
-      const userMessageContent = userTemplate(
-        history,
-        interaction.question,
-        sources.map((_) => _.source.pageContent).join("\n")
-      );
-
       const response = await OpenAIService.gptChatCompletion(
-        userMessageContent
+        sources.map(({ source: { pageContent } }) => pageContent),
+        interaction.question,
+        history
       );
 
       const { answer, questions } = response.choices.map(({ message }) => {
